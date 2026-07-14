@@ -75,6 +75,10 @@ Do not reinterpret a later phrase such as `然后下载前5篇` as permission to
 
 In an analysis, synthesis, reading, note, or maintenance request, `不要下载` sets `allow_download=false` but does not stop work on already available Zotero text, abstracts, or permanent local PDFs.
 
+Before batch Zotero mutation, generate the read-only import preview and stop for preview-ID confirmation. This manual downstream gate also applies when the user says to execute or import the batch directly. Confirmation authorizes only the previewed rows and resolved collection keys. It does not authorize a new search, added downloads, candidate expansion, duplicate deletion, or attachment replacement.
+
+If the source fingerprint, DOI duplicate state, collection key, or PDF path changes after confirmation, mark the preview `preview_stale`, perform no writes, and regenerate it. A `single-item all-green` plan may use the documented fast path only after its preview is saved.
+
 ## Multi-Stage Requests
 
 - Proceed sequentially when every stage is explicit and no stop gate intervenes.

@@ -39,6 +39,13 @@
 | `检查断链附件` | Maintenance diagnosis only |
 | `继续未完成的检索阶段` | Resume discovery only; do not infer acquisition or later stages |
 
+Import preview boundary cases:
+
+- `导入这20篇论文` -> generate preview, show action/completeness/collection counts, and stop for preview-ID confirmation.
+- `直接导入这20篇` -> batch preview and confirmation still apply.
+- `导入这1篇` with one all-green plan -> save preview and use the single-item fast path.
+- changed manifest/PDF after confirmation -> mark `preview_stale`, do not write, regenerate preview.
+
 ## Combined Requests
 
 | Prompt | Expected stage sequence |

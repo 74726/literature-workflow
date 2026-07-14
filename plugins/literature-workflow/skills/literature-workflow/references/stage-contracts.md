@@ -4,7 +4,7 @@
 
 1. Zotero library preflight
 2. Discovery, screening, and selection
-3. Acquisition and Zotero import
+3. Acquisition, import preview, and Zotero import
 4. Ordinary analysis, deep reading, and synthesis
 5. Note writing, maintenance, and continuation
 
@@ -69,18 +69,32 @@ For every stage, identify the trigger, required input, primary tool, preflight, 
 
 Default to main article only. Require explicit authorization for SI, document delivery, interlibrary loan, author contact, account creation, or purchase. Pause for credentials, OTP, CAPTCHA, or entitlement decisions.
 
-## 6. Zotero Import
+## 6. Import Preview
+
+- **Trigger:** Any request that would create or update Zotero items, attachments, collections, or related import state.
+- **Required input:** Stable deduplicated DOI/item set, InstSci manifest, target collection, local PDF state, and Zotero duplicate reads.
+- **Primary tool:** Zotero MCP and local/InstSci artifacts in read-only mode.
+- **Preflight:** Resolve each collection to a unique name and collection key; verify metadata completeness, DOI/title duplicates, PDF validity, permanent absolute paths, and the source fingerprint.
+- **Allowed:** Read Zotero and manifest state; calculate `create_item`, `update_existing`, `no_op`, and `blocked` actions; save `import_preview.json`; show action, completeness, path, and collection counts. Do not mutate Zotero or semantic-index records.
+- **Complete when:** The preview is `preview_ready`, `preview_ready_with_exclusions`, or `preview_blocked`, and every deduplicated row has exactly one primary action. Blocked rows are excluded from execution by default.
+- **Confirmation rule:** Require preview-ID confirmation for every deduplicated batch of two or more items and for any duplicate, update, missing field/PDF, path warning, collection ambiguity, blocked row, or user-requested preview. Bulk wording such as “direct execute” does not bypass confirmation.
+- **Fast path:** Permit a `single-item all-green` plan without a second confirmation only when complete metadata, unique collection key, duplicate check, verified PDF, permanent path, planned `create_item`, and `linked_file` attachment all pass without warnings. Save the preview before writing.
+- **Invalidation:** Before mutation, recompute and compare the source fingerprint, DOI duplicate state, collection key, and PDF path. Mark changed input as `preview_stale`, stop without writing, and regenerate the preview.
+- **Default stop:** Stop for preview-ID confirmation whenever `confirmation_required=true`.
+- **Output:** `import_preview.json`, preview ID/status, source fingerprint, target collection names/keys, per-row actions, completeness and path counts, `confirmation_required`, and index plan.
+
+## 7. Zotero Import
 
 - **Trigger:** Import or add acquired papers to Zotero/collection.
 - **Required input:** Verified successful InstSci rows and target collection. Reuse one unambiguous collection recorded by the current request or project artifacts; otherwise ask once.
 - **Primary tool:** `instsci zotero sync` for InstSci results; Zotero MCP verifies library state.
 - **Preflight:** Exact DOI/title duplicate check and permanent absolute-path validation.
 - **Allowed:** Create or match item, add one `linked_file`, collection, and requested tags; write keys back to manifest.
-- **Complete when:** Item key, attachment key, collection, link mode, and path verify successfully.
+- **Complete when:** Item key, attachment key, collection, link mode, and path verify successfully. Report `import_verified` when every formal row verifies, `no_mutation_required` when every row is `no_op`, or `import_partial` when a formal row fails; defer index work as `sync_deferred` after a formal failure.
 - **Default stop:** Do not analyze or create notes.
 - **Output:** Item key, attachment key, collection, `attachment_mode=linked_file`, absolute path, duplicate result, verification.
 
-## 7. Ordinary Analysis
+## 8. Ordinary Analysis
 
 - **Trigger:** Analyze, summarize, explain, extract methods/results/limitations.
 - **Required input:** Exact Zotero items, DOI values, or local PDFs.
@@ -91,7 +105,7 @@ Default to main article only. Require explicit authorization for SI, document de
 - **Default stop:** Do not create Zotero notes or invoke `nature-reader`.
 - **Output:** Structured summary plus source limitations.
 
-## 8. Deep Bilingual Reading
+## 9. Deep Bilingual Reading
 
 - **Trigger:** Full translation, bilingual parallel text, paragraph anchors, figure/table placement, complete reader artifact.
 - **Required input:** Resolvable source and output location.
@@ -102,7 +116,7 @@ Default to main article only. Require explicit authorization for SI, document de
 - **Default stop:** Do not reduce to a summary-only output.
 - **Output:** Reader artifact paths and limitations.
 
-## 9. Multi-Paper Synthesis
+## 10. Multi-Paper Synthesis
 
 - **Trigger:** Compare papers, summarize common routes, build a matrix, identify gaps.
 - **Required input:** Exact paper set and comparison dimensions.
@@ -113,7 +127,7 @@ Default to main article only. Require explicit authorization for SI, document de
 - **Default stop:** Do not draft a formal review manuscript unless requested.
 - **Output:** Comparison matrix and synthesis with evidence labels.
 
-## 10. Zotero Note Writing
+## 11. Zotero Note Writing
 
 - **Trigger:** Add, save, create, or update a Zotero note.
 - **Required input:** Exact parent item and finished analysis content.
@@ -124,7 +138,7 @@ Default to main article only. Require explicit authorization for SI, document de
 - **Default stop:** Do not modify bibliographic metadata.
 - **Output:** Item key, note key, create/update action, readback verification.
 
-## 11. Library Maintenance
+## 12. Library Maintenance
 
 - **Trigger:** Broken links, missing PDFs, duplicate items, path repair, semantic index.
 - **Required input:** Target library scope and requested maintenance action.
@@ -135,7 +149,7 @@ Default to main article only. Require explicit authorization for SI, document de
 - **Default stop:** No external search/download unless requested.
 - **Output:** Item/attachment keys, diagnosis, path evidence, proposed or completed action.
 
-## 12. Project Continuation
+## 13. Project Continuation
 
 - **Trigger:** Continue, resume, remaining items, previous stop.
 - **Required input:** Project identity, discoverable project artifacts, and a terminal stage from the current explicit request, an explicit scope earlier in the current conversation, or a saved scope/stop report.

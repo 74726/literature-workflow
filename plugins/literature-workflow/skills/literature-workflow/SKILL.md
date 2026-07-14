@@ -57,6 +57,8 @@ Check availability before routing. Use a fallback only if it preserves scope and
 
 Read [zotero-and-files.md](references/zotero-and-files.md) for Zotero, PDF, import, attachment, or note work. Keep `linked_file`, permanent absolute paths, and user-managed synchronization fixed.
 
+Before Zotero mutation, build a read-only import preview using [import-preview-schema.md](references/import-preview-schema.md). Require confirmation for any deduplicated batch of two or more items or any duplicate, update, missing field/PDF, path warning, collection ambiguity, blocked row, or user-requested preview. Permit a single-item all-green fast path only when metadata, unique collection key, duplicate check, verified PDF, permanent path, and planned `create_item` plus `linked_file` attachment all pass without warnings.
+
 For Zotero multi-paper summaries, resolve exact items through Zotero MCP. On linked-file read failure, use the permanent path or recover it from InstSci artifacts. A Zotero MCP 404 does not prove the PDF is missing.
 
 ## Continuation and Reporting
