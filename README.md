@@ -133,6 +133,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local.ps1 -D
 
 Omit `-ConfigureMarketplace` after the first local marketplace setup. Omit `-Development` for a release install. Start a new Codex task after every reinstall.
 
+The installer sets `CODEX_HOME` explicitly. If the `codex` command resolves to an inaccessible WindowsApps executable, pass the working CLI executable with `-CodexCli <absolute-path-to-codex.exe>`.
+
 Publish through a feature-branch pull request. Roll back by checking out the last known-good release tag and reinstalling it through the same marketplace. Archive or remove a legacy personal-skill copy only after the plugin is verified and the user separately authorizes cleanup.
 
 ## License
