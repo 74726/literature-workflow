@@ -55,9 +55,9 @@ Check availability before routing. Use a fallback only if it preserves scope and
 
 ## Zotero and Files
 
-Read [zotero-and-files.md](references/zotero-and-files.md) for Zotero, PDF, import, attachment, or note work. Keep `linked_file`, permanent absolute paths, and user-managed synchronization fixed.
+Read [zotero-and-files.md](references/zotero-and-files.md) for Zotero, PDF, import, attachment, or note work. Keep `linked_file` as the default. Accept a verified `imported_file` only when the user explicitly authorizes Zotero cloud upload; storage mode alone must not pause an otherwise valid batch. Require the attached PDF to open and match the intended paper before reporting import success.
 
-Before Zotero mutation, build a read-only import preview using [import-preview-schema.md](references/import-preview-schema.md). Require confirmation for any deduplicated batch of two or more items or any duplicate, update, missing field/PDF, path warning, collection ambiguity, blocked row, or user-requested preview. Permit a single-item all-green fast path only when metadata, unique collection key, duplicate check, verified PDF, permanent path, and planned `create_item` plus `linked_file` attachment all pass without warnings.
+Before Zotero mutation, build a read-only import preview using [import-preview-schema.md](references/import-preview-schema.md). Require confirmation for any deduplicated batch of two or more items or any duplicate, update, missing field/PDF, path warning, collection ambiguity, blocked row, or user-requested preview. Permit a single-item all-green fast path only when metadata, unique collection key, duplicate check, verified PDF identity, planned `create_item`, the authorized attachment policy, and mode-specific verification evidence all pass without warnings.
 
 For Zotero multi-paper summaries, resolve exact items through Zotero MCP. On linked-file read failure, use the permanent path or recover it from InstSci artifacts. A Zotero MCP 404 does not prove the PDF is missing.
 

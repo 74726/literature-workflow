@@ -2,7 +2,7 @@
 
 ## Contents
 
-1. Fixed attachment policy
+1. Attachment policy
 2. Duplicate and import policy
 3. Index synchronization
 4. Reading fallback
@@ -10,19 +10,28 @@
 6. Notes and maintenance
 7. Credentials and identity
 
-## Fixed Attachment Policy
+## Attachment Policy
 
 Use these invariants:
 
 ```text
-attachment_mode = linked_file
-path_policy = permanent_complete_absolute_path
-sync_policy = user_managed_manual_sync
+attachment_policy = linked_file_only
+default_attachment_mode = linked_file
+cloud_attachment_policy = cloud_allowed only after explicit user authorization
+attachment_identity = verified
 ```
 
 Accept a linked PDF only when its absolute path exists in a permanent research-project directory. Reject relative paths and paths under temporary directories, browser caches, CloakBrowser diagnostic folders, or disposable download staging.
 
 Never move, rename, delete, or relocate a linked PDF without explicit authorization. Warn that Zotero's item synchronization does not automatically synchronize an externally linked file; the user manages file synchronization separately.
+
+When the user explicitly authorizes Zotero cloud upload, set `attachment_policy=cloud_allowed`. Under that policy, accept either `linked_file` or `imported_file` after mode-specific verification. Storage mode alone must not pause an otherwise valid batch.
+
+For every mode, open and read the actual attached PDF after import. Verify its identity against the intended parent using DOI first, then normalized title plus author when the DOI is not extractable from the PDF. Require enough readable content to distinguish the paper from a login page, supplement, correction, abstract-only file, or unrelated PDF. Filename, size, checksum, attachment key, and enclosure metadata may prove file presence or stability, but metadata-only evidence is insufficient to prove that the attachment is the correct paper.
+
+For `linked_file`, open the permanent absolute path. For `imported_file`, read through a Zotero full-text/PDF interface or retrieve the stored attachment and inspect its content. Record `attachment_readable=true` and `attachment_identity=verified`. If the content cannot be opened or its identity cannot be established, fail the row instead of assuming success.
+
+Do not delete, replace, convert, merge, or duplicate a valid attachment merely to change its storage mode. Without explicit cloud authorization, an `imported_file` result remains a formal attachment-policy failure.
 
 ## Duplicate and Import Policy
 
@@ -32,8 +41,8 @@ Never move, rename, delete, or relocate a linked PDF without explicit authorizat
 4. Use Zotero MCP as the sole bibliographic metadata writer and verifier. Use InstSci only for verified manifests, acquired files, and acquisition evidence.
 5. Import only verified successful PDF rows.
 6. Resolve every collection name, including non-ASCII names, to one collection key before mutation.
-7. Create or update the complete bibliographic parent through Zotero MCP, then add one `linked_file` attachment and the resolved collection key.
-8. Read the result back and verify DOI, title, creators, date/publication, item key, attachment key, collection key, `linked_file` mode, full permanent absolute path, file existence, parent duplicate state, and equivalent attachment duplicate state.
+7. Create or update the complete bibliographic parent through Zotero MCP, then add one attachment permitted by the confirmed `attachment_policy` and the resolved collection key.
+8. Read the result back and verify DOI, title, creators, date/publication, item key, attachment key, collection key, actual attachment mode, mode-specific verification evidence, parent duplicate state, and equivalent attachment duplicate state. Open the PDF and verify its content identity. Verify a permanent absolute path for `linked_file`; verify the expected parent and retrievable stored file for `imported_file`.
 9. Stop remaining mutations after the first formal row failure; preserve rows that already passed readback.
 10. Write Zotero keys back to the InstSci manifest when supported.
 
@@ -41,7 +50,7 @@ Do not silently fall back from Zotero MCP complete bibliographic import to a min
 
 Resolve non-ASCII collection names to a collection key before mutation and verify membership by key after import.
 
-Treat empty title, `Untitled`, unexpected empty creators, DOI mismatch, missing intended attachment, non-`linked_file` mode, missing permanent path, duplicate parent, or equivalent duplicate attachment as an incomplete import.
+Treat empty title, `Untitled`, unexpected empty creators, DOI mismatch, missing intended attachment, unreadable PDF content, unverified attachment identity, an attachment mode outside the confirmed policy, missing mode-specific evidence, duplicate parent, or equivalent duplicate attachment as an incomplete import.
 
 Import creates a clean item plus PDF attachment only unless the user explicitly requests tags. Do not create acquisition logs, evidence notes, or analysis notes during import.
 
@@ -58,6 +67,7 @@ For Zotero-based reading, use:
 ```text
 exact Zotero item resolution
 -> Zotero-accessible full text/page/outline
+-> verified imported_file through Zotero
 -> linked_file complete absolute path
 -> DOI/item/attachment lookup in InstSci manifest or zotero_sync_report.json
 -> abstract-level summary with an evidence warning

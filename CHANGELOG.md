@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.1 - 2026-07-14
+
+### Changed
+
+- Kept `linked_file` as the default while allowing a verified Zotero `imported_file` after explicit cloud-upload authorization.
+- Added attachment-policy and actual-mode fields to import previews and reports.
+
+### Fixed
+
+- Prevented valid cloud attachments from pausing the remaining batch solely because of storage mode.
+- Prevented automatic deletion, conversion, or duplication of a valid attachment when its storage mode differs from the default.
+- Required the attached PDF to open and match the intended paper; attachment metadata alone no longer proves import success.
+
 ## 1.1.0 - 2026-07-14
 
 ### Added

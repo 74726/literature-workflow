@@ -62,7 +62,7 @@ Preview states:
 
 Import states:
 
-- `import_verified`: every formal mutation passed Zotero MCP readback.
+- `import_verified`: every formal mutation passed Zotero MCP readback, the attached PDF opened, and its content identity matched the intended paper.
 - `import_partial`: a formal row failed; stop remaining mutations, preserve verified completed rows, and defer synchronization.
 - `no_mutation_required`: every deduplicated row is `no_op`; perform no Zotero writes.
 
@@ -74,7 +74,7 @@ Index synchronization states:
 - `sync_success`: one `zotero_update_search_database(force_rebuild=False)` call completed and the affected item keys were retrievable through semantic search.
 - `sync_failed`: the update call failed or item-key semantic-search evidence was incomplete. Preserve the separate verified import state.
 
-For every batch, report separate `requested`, `deduplicated`, `create`, `update`, `no-op`, `blocked`, `formal-success`, `formal-failure`, `sync-processed`, `sync-added`, `sync-updated`, `sync-skipped`, and `sync-error` counts. Retain item, attachment, collection, preview ID, source fingerprint, and permanent-path evidence for each applicable row.
+For every batch, report separate `requested`, `deduplicated`, `create`, `update`, `no-op`, `blocked`, `formal-success`, `formal-failure`, `sync-processed`, `sync-added`, `sync-updated`, `sync-skipped`, and `sync-error` counts. Retain item, attachment, collection, preview ID, source fingerprint, confirmed attachment policy, actual attachment mode, `attachment_readable`, `attachment_identity`, and mode-specific verification evidence for each applicable row.
 
 ## Completion Summary
 
@@ -96,4 +96,4 @@ Safe next commands:
 
 Use explicit counts where a batch is involved. State `not performed` rather than omitting downstream stages, so the user can distinguish an intentional stop from a forgotten action.
 
-For acquisition, retain InstSci's file status, standard status, result evidence, route, path state, absolute path when successful, and next action. For import, retain preview/import/sync states, item key, attachment key, collection key, attachment mode, readback result, verified path, and semantic-search evidence. For analysis, retain the evidence level for every paper.
+For acquisition, retain InstSci's file status, standard status, result evidence, route, path state, absolute path when successful, and next action. For import, retain preview/import/sync states, item key, attachment key, collection key, confirmed attachment policy, actual attachment mode, readback result, mode-specific verification evidence, and semantic-search evidence. For analysis, retain the evidence level for every paper.

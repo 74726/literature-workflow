@@ -15,7 +15,7 @@ class ReleaseContractTests(unittest.TestCase):
 
     def test_release_version_has_one_source(self):
         manifest = json.loads(self.read(PLUGIN / ".codex-plugin" / "plugin.json"))
-        self.assertEqual(manifest["version"], "1.1.0")
+        self.assertEqual(manifest["version"], "1.1.1")
         self.assertFalse((ROOT / "VERSION").exists())
         self.assertFalse((PLUGIN / "VERSION").exists())
 
@@ -79,6 +79,24 @@ class ReleaseContractTests(unittest.TestCase):
             "collection-only",
         ):
             self.assertIn(term, policy)
+
+    def test_cloud_attachment_policy_is_explicit_and_fail_closed(self):
+        runtime = "\n".join(
+            self.read(path)
+            for path in (SKILL / "SKILL.md", *sorted(REFS.glob("*.md")))
+        )
+        for term in (
+            "attachment_policy = linked_file_only",
+            "cloud_allowed",
+            "imported_file",
+            "mode-specific verification evidence",
+            "attachment_identity = verified",
+            "metadata-only evidence is insufficient",
+            "DOI first, then normalized title plus author",
+            "Do not delete, replace, convert, merge, or duplicate",
+        ):
+            self.assertIn(term, runtime)
+        self.assertNotIn("non-`linked_file` mode", runtime)
 
     def test_reporting_separates_state_dimensions(self):
         report = self.read(REFS / "project-state-and-reporting.md")

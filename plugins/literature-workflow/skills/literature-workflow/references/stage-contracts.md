@@ -72,13 +72,13 @@ Default to main article only. Require explicit authorization for SI, document de
 ## 6. Import Preview
 
 - **Trigger:** Any request that would create or update Zotero items, attachments, collections, or related import state.
-- **Required input:** Stable deduplicated DOI/item set, InstSci manifest, target collection, local PDF state, and Zotero duplicate reads.
+- **Required input:** Stable deduplicated DOI/item set, InstSci manifest, target collection, PDF state, Zotero duplicate reads, and the explicit attachment policy.
 - **Primary tool:** Zotero MCP and local/InstSci artifacts in read-only mode.
-- **Preflight:** Resolve each collection to a unique name and collection key; verify metadata completeness, DOI/title duplicates, PDF validity, permanent absolute paths, and the source fingerprint.
+- **Preflight:** Resolve each collection to a unique name and collection key; verify metadata completeness, DOI/title duplicates, PDF readability and content identity, mode-specific attachment evidence, and the source fingerprint. Default to `linked_file_only`; use `cloud_allowed` only after explicit user authorization.
 - **Allowed:** Read Zotero and manifest state; calculate `create_item`, `update_existing`, `no_op`, and `blocked` actions; save `import_preview.json`; show action, completeness, path, and collection counts. Do not mutate Zotero or semantic-index records.
 - **Complete when:** The preview is `preview_ready`, `preview_ready_with_exclusions`, or `preview_blocked`, and every deduplicated row has exactly one primary action. Blocked rows are excluded from execution by default.
 - **Confirmation rule:** Require preview-ID confirmation for every deduplicated batch of two or more items and for any duplicate, update, missing field/PDF, path warning, collection ambiguity, blocked row, or user-requested preview. Bulk wording such as “direct execute” does not bypass confirmation.
-- **Fast path:** Permit a `single-item all-green` plan without a second confirmation only when complete metadata, unique collection key, duplicate check, verified PDF, permanent path, planned `create_item`, and `linked_file` attachment all pass without warnings. Save the preview before writing.
+- **Fast path:** Permit a `single-item all-green` plan without a second confirmation only when complete metadata, unique collection key, duplicate check, verified PDF, planned `create_item`, confirmed attachment policy, and mode-specific verification evidence all pass without warnings. Save the preview before writing.
 - **Invalidation:** Before mutation, recompute and compare the source fingerprint, DOI duplicate state, collection key, and PDF path. Mark changed input as `preview_stale`, stop without writing, and regenerate the preview.
 - **Default stop:** Stop for preview-ID confirmation whenever `confirmation_required=true`.
 - **Output:** `import_preview.json`, preview ID/status, source fingerprint, target collection names/keys, per-row actions, completeness and path counts, `confirmation_required`, and index plan.
@@ -90,13 +90,13 @@ Default to main article only. Require explicit authorization for SI, document de
 - **Primary tool:** Zotero MCP as the sole bibliographic metadata writer and verifier; InstSci supplies verified manifests and files.
 - **Preflight:** Before the first mutation, recompute the source fingerprint and recheck DOI duplicates, every collection key, and every planned PDF path. Any difference marks the preview `preview_stale`, performs no writes, and returns to dry-run.
 - **Resolution order:** Match normalized DOI exactly, then use normalized title plus author and year cautiously only when DOI is absent.
-- **Allowed:** Resolve collection name to collection key, perform complete Zotero MCP create/update, add one `linked_file` attachment, add verified collection membership, and write verified Zotero keys back to the manifest.
-- **Readback:** Verify DOI, a non-empty non-`Untitled` title, the creators/date/publication reported by the source, collection key, attachment key, `linked_file` mode, permanent absolute path and file existence, parent duplicate state, and equivalent attachment duplicate state.
+- **Allowed:** Resolve collection name to collection key, perform complete Zotero MCP create/update, add one attachment permitted by the confirmed policy, add verified collection membership, and write verified Zotero keys back to the manifest. Preserve a valid existing attachment in its current authorized mode.
+- **Readback:** Verify DOI, a non-empty non-`Untitled` title, the creators/date/publication reported by the source, collection key, attachment key, actual attachment mode, mode-specific verification evidence, parent duplicate state, and equivalent attachment duplicate state. Open the attached PDF and verify its identity using DOI first, then normalized title plus author. `linked_file` requires a permanent absolute path and readable local file. `imported_file` requires `cloud_allowed`, the expected parent key, PDF content type, and readable content through Zotero or a retrieved stored file. Metadata-only evidence is insufficient.
 - **Failure rule:** A formal row failure stops remaining mutations, preserves already verified rows, reports `import_partial`, and sets `sync_deferred`. Never count a created parent or attachment as successful before readback passes.
-- **Complete when:** Report `import_verified` only when every formal row verifies, `no_mutation_required` when every row is `no_op`, or `import_partial` when a formal row fails.
+- **Complete when:** Report `import_verified` only when every formal row has `attachment_readable=true` and `attachment_identity=verified`, `no_mutation_required` when every row is `no_op` with previously verified attachments, or `import_partial` when a formal row fails.
 - **Index sync:** After `import_verified`, call `zotero_update_search_database(force_rebuild=False)` once only when the preview reports a semantic change, then verify the affected item keys through semantic search. Use `sync_not_required` for a non-semantic plan, `sync_success` after verified retrieval, and `sync_failed` when the update or evidence check fails.
 - **Default stop:** Do not analyze or create notes.
-- **Output:** Preview ID/fingerprint, import state, sync state, item key, attachment key, collection key, `attachment_mode=linked_file`, absolute path, duplicate result, readback evidence, and item-key semantic-search evidence.
+- **Output:** Preview ID/fingerprint, import state, sync state, item key, attachment key, collection key, confirmed `attachment_policy`, actual `attachment_mode`, mode-specific verification evidence, duplicate result, readback evidence, and item-key semantic-search evidence.
 
 ## 8. Ordinary Analysis
 

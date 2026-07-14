@@ -17,15 +17,16 @@ A row succeeds only when all of the following pass:
 1. The bibliographic parent has complete required metadata and the DOI matches.
 2. The parent is the unique DOI-matched item or the preview explicitly reuses it.
 3. The target collection membership is correct.
-4. Exactly one intended, verified PDF attachment is present.
+4. Exactly one intended PDF attachment is present, opens successfully, and contains the intended paper.
 5. Its link mode is `linked_file`, or it is `imported_file` and cloud upload is explicitly authorized.
-6. A `linked_file` has a verified permanent absolute path; an `imported_file` has a readable Zotero attachment record with file evidence such as filename, size, checksum, or enclosure metadata.
+6. A `linked_file` opens from its verified permanent absolute path; an `imported_file` opens through Zotero or a retrieved stored file.
+7. PDF content identity matches using DOI first, then normalized title plus author when DOI is not extractable. Metadata-only evidence is insufficient.
 
 If these checks pass, continue the remaining rows and synchronize the semantic index once after the full batch verifies.
 
 ## Failure and Safety Rules
 
-Pause the remaining batch for incomplete metadata, DOI/PDF mismatch, duplicate parent items, missing attachment, an equivalent duplicate attachment, unreadable attachment evidence, or an attachment mode outside the authorized set.
+Pause the remaining batch for incomplete metadata, DOI/PDF mismatch, duplicate parent items, missing attachment, an equivalent duplicate attachment, unreadable PDF content, unverified attachment identity, or an attachment mode outside the authorized set.
 
 Never delete, replace, convert, merge, or duplicate an attachment merely to change its storage mode. Those mutations require a separate explicit authorization.
 

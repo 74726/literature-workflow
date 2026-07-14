@@ -1,4 +1,4 @@
-# Literature Workflow 1.1.0 Integration Matrix
+# Literature Workflow 1.1.1 Integration Matrix
 
 | Case | Setup | Expected preview | Expected import | Expected sync | Evidence |
 |---|---|---|---|---|---|

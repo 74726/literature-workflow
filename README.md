@@ -8,7 +8,7 @@
 
 - 文献发现、筛选和稳定编号；
 - DOI/PDF 获取及学校订阅访问流程；
-- Zotero 查重、`linked_file` 导入和附件状态核验；
+- Zotero 查重、默认 `linked_file` 导入、经授权的云端附件和附件状态核验；
 - 单篇或多篇文献的证据分级总结；
 - 明确授权后的横向综合、研究空白和 Zotero 笔记；
 - 断链、重复条目和缺失附件的诊断；
@@ -86,7 +86,7 @@ $literature-workflow <你的任务>
 2. `供我筛选`、`先返回`、`先看看`会在候选表处暂停，即使同一句后面写了下载。
 3. 在分析任务中，`不要下载`不阻止读取已经存在的 Zotero 正文、摘要或永久本地 PDF。
 4. Zotero MCP 读取失败不等于本地 PDF 丢失；先检查永久绝对路径。
-5. `linked_file` 必须指向永久研究目录，拒绝相对路径、Temp、浏览器缓存和诊断目录。
+5. `linked_file` 必须指向永久研究目录；用户明确允许云端上传时，验证正确的 `imported_file` 也可接受。
 6. Zotero 条目同步不会自动同步外部 linked file；文件同步由用户自行管理。
 7. 普通多篇总结不会自动升级为比较或研究空白分析。
 8. 缺少全文时必须标记 `[摘要]` 或 `[元数据]`，不得把推断写成全文结论。
@@ -143,4 +143,4 @@ MIT。许可证只覆盖本仓库原创内容，不改变任何第三方组件�
 
 ## English summary
 
-Literature Workflow is a skill-only Codex plugin that coordinates literature discovery, lawful full-text acquisition, Zotero linked-file management, evidence-aware analysis, notes, maintenance, and safe continuation. Third-party tools are optional and are not bundled.
+Literature Workflow is a skill-only Codex plugin that coordinates literature discovery, lawful full-text acquisition, verified Zotero attachment management, evidence-aware analysis, notes, maintenance, and safe continuation. Third-party tools are optional and are not bundled.

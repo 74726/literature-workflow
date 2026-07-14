@@ -1,6 +1,6 @@
 {
   "name": "literature-workflow",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Coordinate scholarly discovery, acquisition, Zotero, analysis, and continuation without repeating completed work.",
   "author": {
     "name": "74726",
@@ -14,7 +14,7 @@
   "interface": {
     "displayName": "Literature Workflow",
     "shortDescription": "Coordinate literature search, Zotero, and analysis",
-    "longDescription": "Routes discovery, screening, lawful full-text acquisition, linked-file Zotero import, evidence-aware analysis, notes, maintenance, and continuation with explicit stop gates.",
+    "longDescription": "Routes discovery, screening, lawful full-text acquisition, verified Zotero import, evidence-aware analysis, notes, maintenance, and continuation with explicit stop gates.",
     "developerName": "74726",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
