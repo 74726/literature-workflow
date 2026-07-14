@@ -86,13 +86,17 @@ Default to main article only. Require explicit authorization for SI, document de
 ## 7. Zotero Import
 
 - **Trigger:** Import or add acquired papers to Zotero/collection.
-- **Required input:** Verified successful InstSci rows and target collection. Reuse one unambiguous collection recorded by the current request or project artifacts; otherwise ask once.
-- **Primary tool:** `instsci zotero sync` for InstSci results; Zotero MCP verifies library state.
-- **Preflight:** Exact DOI/title duplicate check and permanent absolute-path validation.
-- **Allowed:** Create or match item, add one `linked_file`, collection, and requested tags; write keys back to manifest.
-- **Complete when:** Item key, attachment key, collection, link mode, and path verify successfully. Report `import_verified` when every formal row verifies, `no_mutation_required` when every row is `no_op`, or `import_partial` when a formal row fails; defer index work as `sync_deferred` after a formal failure.
+- **Required input:** Confirmed non-stale preview or a saved `single-item all-green` fast-path preview, verified successful InstSci rows, and resolved collection keys.
+- **Primary tool:** Zotero MCP as the sole bibliographic metadata writer and verifier; InstSci supplies verified manifests and files.
+- **Preflight:** Before the first mutation, recompute the source fingerprint and recheck DOI duplicates, every collection key, and every planned PDF path. Any difference marks the preview `preview_stale`, performs no writes, and returns to dry-run.
+- **Resolution order:** Match normalized DOI exactly, then use normalized title plus author and year cautiously only when DOI is absent.
+- **Allowed:** Resolve collection name to collection key, perform complete Zotero MCP create/update, add one `linked_file` attachment, add verified collection membership, and write verified Zotero keys back to the manifest.
+- **Readback:** Verify DOI, a non-empty non-`Untitled` title, the creators/date/publication reported by the source, collection key, attachment key, `linked_file` mode, permanent absolute path and file existence, parent duplicate state, and equivalent attachment duplicate state.
+- **Failure rule:** A formal row failure stops remaining mutations, preserves already verified rows, reports `import_partial`, and sets `sync_deferred`. Never count a created parent or attachment as successful before readback passes.
+- **Complete when:** Report `import_verified` only when every formal row verifies, `no_mutation_required` when every row is `no_op`, or `import_partial` when a formal row fails.
+- **Index sync:** After `import_verified`, call `zotero_update_search_database(force_rebuild=False)` once only when the preview reports a semantic change, then verify the affected item keys through semantic search. Use `sync_not_required` for a non-semantic plan, `sync_success` after verified retrieval, and `sync_failed` when the update or evidence check fails.
 - **Default stop:** Do not analyze or create notes.
-- **Output:** Item key, attachment key, collection, `attachment_mode=linked_file`, absolute path, duplicate result, verification.
+- **Output:** Preview ID/fingerprint, import state, sync state, item key, attachment key, collection key, `attachment_mode=linked_file`, absolute path, duplicate result, readback evidence, and item-key semantic-search evidence.
 
 ## 8. Ordinary Analysis
 

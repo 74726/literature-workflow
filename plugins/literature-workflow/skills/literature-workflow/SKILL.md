@@ -49,7 +49,7 @@ Read [stage-contracts.md](references/stage-contracts.md) for the selected stage.
 
 Use this Skill as lead for multi-stage scope, explicit stop gates or negative constraints, continuation, and cross-system artifact coordination. For one clearly scoped specialist stage, use that stage owner directly.
 
-Use InstSci for ordinary discovery, selection, acquisition, publisher access, and `instsci zotero sync`. Use Zotero MCP for library objects and notes. Route PubMed/MeSH/citation impact to `nature-academic-search`, claim support to `nature-citation`, bibliography fields to `nature-ref-verifier`, and explicit bilingual/translation/source-anchor/figure-table reading to `nature-reader`. `总结`, `详细总结`, `深度分析`, or `读懂这篇` alone remains ordinary analysis using Zotero text or permanent PDFs.
+Use InstSci for discovery, selection, acquisition, publisher access, and verified manifests. Use Zotero MCP as the sole bibliographic metadata writer and verifier. Do not silently fall back to DOI/URL-only parent creation. After every planned mutation passes readback, 同步索引 once with `force_rebuild=False` only when the preview's index plan reports a semantic change. Route PubMed/MeSH/citation impact to `nature-academic-search`, claim support to `nature-citation`, bibliography fields to `nature-ref-verifier`, and explicit bilingual/translation/source-anchor/figure-table reading to `nature-reader`. `总结`, `详细总结`, `深度分析`, or `读懂这篇` alone remains ordinary analysis using Zotero text or permanent PDFs.
 
 Check availability before routing. Use a fallback only if it preserves scope and evidence quality.
 
