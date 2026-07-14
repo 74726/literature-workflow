@@ -1,0 +1,20 @@
+{
+  "name": "literature-workflow",
+  "interface": {
+    "displayName": "Literature Workflow"
+  },
+  "plugins": [
+    {
+      "name": "literature-workflow",
+      "source": {
+        "source": "local",
+        "path": "./plugins/literature-workflow"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

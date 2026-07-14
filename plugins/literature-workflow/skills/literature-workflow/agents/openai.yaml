@@ -1,0 +1,4 @@
+interface:
+  display_name: "Literature Workflow"
+  short_description: "Coordinate literature search, Zotero, and analysis"
+  default_prompt: "Use $literature-workflow to continue my literature project from the correct stage without repeating completed work."

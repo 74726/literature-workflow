@@ -1,0 +1,28 @@
+{
+  "name": "literature-workflow",
+  "version": "1.0.0",
+  "description": "Coordinate scholarly discovery, acquisition, Zotero, analysis, and continuation without repeating completed work.",
+  "author": {
+    "name": "74726",
+    "url": "https://github.com/74726"
+  },
+  "homepage": "https://github.com/74726/literature-workflow#readme",
+  "repository": "https://github.com/74726/literature-workflow",
+  "license": "MIT",
+  "keywords": ["literature", "research", "zotero", "instsci", "academic"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Literature Workflow",
+    "shortDescription": "Coordinate literature search, Zotero, and analysis",
+    "longDescription": "Routes discovery, screening, lawful full-text acquisition, linked-file Zotero import, evidence-aware analysis, notes, maintenance, and continuation with explicit stop gates.",
+    "developerName": "74726",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/74726/literature-workflow",
+    "defaultPrompt": [
+      "Search papers and stop for my screening before downloading.",
+      "Continue my literature project without repeating completed work.",
+      "Summarize selected Zotero papers using existing full text."
+    ]
+  }
+}

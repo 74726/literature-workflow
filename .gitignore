@@ -1,0 +1,22 @@
+# Secrets and local configuration
+.env
+.env.*
+config.json
+cookies.json
+cookies*.json
+carsi_cookies/
+chrome-profile/
+
+# Research data and run outputs
+*.pdf
+*.docx
+*.xlsx
+runs/
+downloads/
+papers/
+
+# Local tooling
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
