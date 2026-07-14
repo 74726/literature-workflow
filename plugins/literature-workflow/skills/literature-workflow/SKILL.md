@@ -49,13 +49,15 @@ Read [stage-contracts.md](references/stage-contracts.md) for the selected stage.
 
 Use this Skill as lead for multi-stage scope, explicit stop gates or negative constraints, continuation, and cross-system artifact coordination. For one clearly scoped specialist stage, use that stage owner directly.
 
-Use InstSci for ordinary discovery, selection, acquisition, publisher access, and `instsci zotero sync`. Use Zotero MCP for library objects and notes. Route PubMed/MeSH/citation impact to `nature-academic-search`, claim support to `nature-citation`, bibliography fields to `nature-ref-verifier`, and explicit bilingual/translation/source-anchor/figure-table reading to `nature-reader`. `总结`, `详细总结`, `深度分析`, or `读懂这篇` alone remains ordinary analysis using Zotero text or permanent PDFs.
+Use InstSci for discovery, selection, acquisition, publisher access, and verified manifests. Use Zotero MCP as the sole bibliographic metadata writer and verifier. Do not silently fall back to DOI/URL-only parent creation. After every planned mutation passes readback, 同步索引 once with `force_rebuild=False` only when the preview's index plan reports a semantic change. Route PubMed/MeSH/citation impact to `nature-academic-search`, claim support to `nature-citation`, bibliography fields to `nature-ref-verifier`, and explicit bilingual/translation/source-anchor/figure-table reading to `nature-reader`. `总结`, `详细总结`, `深度分析`, or `读懂这篇` alone remains ordinary analysis using Zotero text or permanent PDFs.
 
 Check availability before routing. Use a fallback only if it preserves scope and evidence quality.
 
 ## Zotero and Files
 
 Read [zotero-and-files.md](references/zotero-and-files.md) for Zotero, PDF, import, attachment, or note work. Keep `linked_file`, permanent absolute paths, and user-managed synchronization fixed.
+
+Before Zotero mutation, build a read-only import preview using [import-preview-schema.md](references/import-preview-schema.md). Require confirmation for any deduplicated batch of two or more items or any duplicate, update, missing field/PDF, path warning, collection ambiguity, blocked row, or user-requested preview. Permit a single-item all-green fast path only when metadata, unique collection key, duplicate check, verified PDF, permanent path, and planned `create_item` plus `linked_file` attachment all pass without warnings.
 
 For Zotero multi-paper summaries, resolve exact items through Zotero MCP. On linked-file read failure, use the permanent path or recover it from InstSci artifacts. A Zotero MCP 404 does not prove the PDF is missing.
 

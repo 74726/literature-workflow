@@ -5,7 +5,8 @@
 1. Sources of truth
 2. Continuation algorithm
 3. Conflict handling
-4. Completion summary
+4. Import and index states
+5. Completion summary
 
 ## Sources of Truth
 
@@ -16,7 +17,7 @@
 | Selection | InstSci selected DOI output and neighboring selection report |
 | Acquisition | InstSci manifest plus verified permanent local PDF |
 | Acquisition follow-up | `workflow_plan.json` |
-| Zotero import | Updated InstSci manifest plus `zotero_sync_report.json` |
+| Zotero import | Confirmed `import_preview.json`, updated InstSci manifest, Zotero MCP readback, and import/sync report |
 | Library state | Zotero item, collection, attachment, and note records |
 | Analysis | Verified local analysis artifact or read-back Zotero note |
 
@@ -48,6 +49,33 @@ If multiple plausible projects remain, ask one concise disambiguation question. 
 - Report conflicting manifests or item mappings; do not silently merge them. Freeze only affected rows and continue unaffected rows within the authorized scope.
 - If a file was moved, do not change the Zotero link until the user authorizes repair.
 
+## Import and Index States
+
+Track preview, import, and index synchronization as separate dimensions. Never collapse them into one success flag.
+
+Preview states:
+
+- `preview_ready`: all formal rows are executable and no confirmation-blocking issue remains beyond the normal batch gate.
+- `preview_ready_with_exclusions`: at least one formal row is executable and every blocked row is explicitly excluded.
+- `preview_blocked`: a global issue or the row set leaves nothing eligible for formal execution.
+- `preview_stale`: the source fingerprint, DOI duplicate state, collection key, or PDF path changed after preview creation; perform no writes and regenerate the preview.
+
+Import states:
+
+- `import_verified`: every formal mutation passed Zotero MCP readback.
+- `import_partial`: a formal row failed; stop remaining mutations, preserve verified completed rows, and defer synchronization.
+- `no_mutation_required`: every deduplicated row is `no_op`; perform no Zotero writes.
+
+Index synchronization states:
+
+- `sync_planned`: the preview contains at least one semantic change and synchronization has not run.
+- `sync_not_required`: the plan contains no semantic change, including note-only, tag-only, collection-only, or all-`no_op` work.
+- `sync_deferred`: a formal import row failed or a semantic mutation did not pass readback.
+- `sync_success`: one `zotero_update_search_database(force_rebuild=False)` call completed and the affected item keys were retrievable through semantic search.
+- `sync_failed`: the update call failed or item-key semantic-search evidence was incomplete. Preserve the separate verified import state.
+
+For every batch, report separate `requested`, `deduplicated`, `create`, `update`, `no-op`, `blocked`, `formal-success`, `formal-failure`, `sync-processed`, `sync-added`, `sync-updated`, `sync-skipped`, and `sync-error` counts. Retain item, attachment, collection, preview ID, source fingerprint, and permanent-path evidence for each applicable row.
+
 ## Completion Summary
 
 End every stage with:
@@ -68,4 +96,4 @@ Safe next commands:
 
 Use explicit counts where a batch is involved. State `not performed` rather than omitting downstream stages, so the user can distinguish an intentional stop from a forgotten action.
 
-For acquisition, retain InstSci's file status, standard status, result evidence, route, path state, absolute path when successful, and next action. For import, retain item key, attachment key, collection, attachment mode, and verified path. For analysis, retain the evidence level for every paper.
+For acquisition, retain InstSci's file status, standard status, result evidence, route, path state, absolute path when successful, and next action. For import, retain preview/import/sync states, item key, attachment key, collection key, attachment mode, readback result, verified path, and semantic-search evidence. For analysis, retain the evidence level for every paper.

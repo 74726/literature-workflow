@@ -13,7 +13,7 @@
 | Prompt | Stage | Primary tool | Must do | Must not do | Stop point |
 |---|---|---|---|---|---|
 | `搜索纤维素2022年后的论文，先返回20篇供我筛选，不要下载` | discovery | InstSci | Return stable candidates | Download/import/analyze | candidate list |
-| `把下载好的导入Zotero` | import | InstSci sync + Zotero verification | Use verified absolute linked files | Create notes or analyze | verified import report |
+| `把下载好的导入Zotero` | import preview -> import -> index sync when planned | Zotero MCP + verified InstSci manifest | Preview, write complete metadata, attach verified absolute linked files, and read back | Minimal parent fallback, notes, or analysis | verified import and sync report |
 | `Zotero读不到附件；若本地缺失就重新下载并绑定原条目` | maintenance -> conditional acquisition/rebind | Zotero + local artifacts + InstSci if missing | Reuse valid local PDF; otherwise reacquire and rebind the existing item | Duplicate item or unnecessary download | verified diagnosis or repaired attachment |
 | `总结Zotero纤维素目录下这5篇` | ordinary analysis | Zotero entrypoint + local fallback | Resolve exact items and evidence levels | Redownload/reimport/write notes | summary |
 | `继续上次纤维素流程` | continuation | artifacts, then stage executor | Reconstruct state | Repeat completed stages | next requested gate |
@@ -38,6 +38,13 @@
 | `把刚才总结写入对应文献笔记` | Note write plus readback |
 | `检查断链附件` | Maintenance diagnosis only |
 | `继续未完成的检索阶段` | Resume discovery only; do not infer acquisition or later stages |
+
+Import preview boundary cases:
+
+- `导入这20篇论文` -> generate preview, show action/completeness/collection counts, and stop for preview-ID confirmation.
+- `直接导入这20篇` -> batch preview and confirmation still apply.
+- `导入这1篇` with one all-green plan -> save preview and use the single-item fast path.
+- changed manifest/PDF after confirmation -> mark `preview_stale`, do not write, regenerate preview.
 
 ## Combined Requests
 

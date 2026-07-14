@@ -4,10 +4,11 @@
 
 1. Fixed attachment policy
 2. Duplicate and import policy
-3. Reading fallback
-4. Multi-paper summaries
-5. Notes and maintenance
-6. Credentials and identity
+3. Index synchronization
+4. Reading fallback
+5. Multi-paper summaries
+6. Notes and maintenance
+7. Credentials and identity
 
 ## Fixed Attachment Policy
 
@@ -28,12 +29,27 @@ Never move, rename, delete, or relocate a linked PDF without explicit authorizat
 1. Match normalized DOI exactly.
 2. If DOI is absent, match normalized title plus author and year cautiously.
 3. Inspect the existing item's child attachments before creating anything.
-4. Use one import path for one paper. Do not run InstSci sync and a second Zotero creation path for the same item.
+4. Use Zotero MCP as the sole bibliographic metadata writer and verifier. Use InstSci only for verified manifests, acquired files, and acquisition evidence.
 5. Import only verified successful PDF rows.
-6. Verify item key, attachment key, collection, `linked_file` mode, full absolute path, and file existence.
-7. Write Zotero keys back to the InstSci manifest when supported.
+6. Resolve every collection name, including non-ASCII names, to one collection key before mutation.
+7. Create or update the complete bibliographic parent through Zotero MCP, then add one `linked_file` attachment and the resolved collection key.
+8. Read the result back and verify DOI, title, creators, date/publication, item key, attachment key, collection key, `linked_file` mode, full permanent absolute path, file existence, parent duplicate state, and equivalent attachment duplicate state.
+9. Stop remaining mutations after the first formal row failure; preserve rows that already passed readback.
+10. Write Zotero keys back to the InstSci manifest when supported.
+
+Do not silently fall back from Zotero MCP complete bibliographic import to a minimal parent containing only DOI, URL, tags, or collection membership.
+
+Resolve non-ASCII collection names to a collection key before mutation and verify membership by key after import.
+
+Treat empty title, `Untitled`, unexpected empty creators, DOI mismatch, missing intended attachment, non-`linked_file` mode, missing permanent path, duplicate parent, or equivalent duplicate attachment as an incomplete import.
 
 Import creates a clean item plus PDF attachment only unless the user explicitly requests tags. Do not create acquisition logs, evidence notes, or analysis notes during import.
+
+## Index Synchronization
+
+Use the user-facing term 同步索引. Internally call `zotero_update_search_database(force_rebuild=False)` once after all planned semantic mutations verify. Do not trigger it for note-only, tag-only, collection-only, or all-`no_op` plans.
+
+A semantic change is a new article, a new or replaced readable PDF, or a material change to title, abstract, or another field the configured indexer explicitly embeds. Run one synchronization for the relevant batch, not once per item. Verify the affected item keys through semantic search after the update. Keep import and sync outcomes separate: a sync failure does not erase verified Zotero writes, and an incomplete import defers synchronization.
 
 ## Reading Fallback
 
@@ -80,7 +96,7 @@ ATTACHMENT_RECORD_MISSING
 DUPLICATE_ITEM
 ```
 
-Path repair, duplicate merge, and deletion require explicit authorization. Update a semantic index once after a relevant batch, not once per item, and never use semantic search as authoritative DOI duplicate detection.
+Path repair, duplicate merge, and deletion require explicit authorization. Never use semantic search as authoritative DOI duplicate detection.
 
 ## Credentials and Identity
 

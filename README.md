@@ -108,6 +108,35 @@ $literature-workflow <你的任务>
 
 本仓库不包含上述第三方项目的源码、二进制、模型、配置、凭据或数据。项目名称仅用于描述兼容性和互操作性。本项目不代表这些第三方项目，也未获得其官方背书。详见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
+## Development and local installation
+
+The Git repository is the source of truth. Work on a feature branch, validate the repository copy, and install through the repository marketplace. Do not publish with a direct copy into `~/.codex/skills`.
+
+The official validation helpers require PyYAML. Install it once in the selected Codex Python when it is missing:
+
+```powershell
+$python = "$env:USERPROFILE/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe"
+& $python -m pip install PyYAML
+```
+
+Use Python UTF-8 mode on Windows so the validators can read Chinese text reliably:
+
+```powershell
+git switch main
+git pull --ff-only
+git switch -c feat/zotero-import-preview-index-sync
+$python = "$env:USERPROFILE/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe"
+& $python -X utf8 "$env:USERPROFILE/.codex/skills/.system/skill-creator/scripts/quick_validate.py" plugins/literature-workflow/skills/literature-workflow
+& $python -X utf8 "$env:USERPROFILE/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py" plugins/literature-workflow
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_local.ps1 -Development -ConfigureMarketplace
+```
+
+Omit `-ConfigureMarketplace` after the first local marketplace setup. Omit `-Development` for a release install. Start a new Codex task after every reinstall.
+
+The installer sets `CODEX_HOME` explicitly. If the `codex` command resolves to an inaccessible WindowsApps executable, pass the working CLI executable with `-CodexCli <absolute-path-to-codex.exe>`.
+
+Publish through a feature-branch pull request. Roll back by checking out the last known-good release tag and reinstalling it through the same marketplace. Archive or remove a legacy personal-skill copy only after the plugin is verified and the user separately authorizes cleanup.
+
 ## License
 
 MIT。许可证只覆盖本仓库原创内容，不改变任何第三方组件各自的许可证。
